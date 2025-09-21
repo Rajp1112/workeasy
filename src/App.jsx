@@ -15,6 +15,7 @@ import ProtectedRoute from "./layout/ProtectedRoute";
 import ProtectedRoutePage from "./layout/ProtectedRoutePage";
 import WorkerProfile from "./pages/FindWorkers/WorkerProfile/WorkerProfile";
 import BookService from "./pages/FindWorkers/BookService/BookService";
+import CustomerDashboard from "./pages/Dashboards/CustomerDashboard";
 // Protected Route Component
 //
 
@@ -30,7 +31,6 @@ function App() {
             </Layout>
           }
         />
-
         <Route
           path="/find-workers"
           element={
@@ -61,10 +61,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Add other protected routes here */}
+        Example:{" "}
+        <Route
+          path="/customer-dashboard/:customerId"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <CustomerDashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
         <Route path="/protected-fallback" element={<ProtectedRoutePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
         {/* Fallback route for unmatched URLs */}
         <Route
           path="*"

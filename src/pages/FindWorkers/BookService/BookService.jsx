@@ -11,22 +11,29 @@ import {
 import { FaUser } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import IconButton from "../../../components/IconButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomSelect from "../../../components/CustomSelect";
 import CustomDateSelect from "../../../components/CustomDateSelect";
 import CustomInput from "../../../components/CustomInput";
+import { useDispatch, useSelector } from "react-redux";
+import { createBooking } from "../../../features/booking/bookingSlice";
+import { useToast } from "../../../components/ToastProvider";
 
-const BookService = ({ workerData }) => {
+const BookService = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const workerData = location.state?.worker;
   const urgentFee = 20;
+  const { showToast } = useToast();
 
-  // Price from backend (or default values)
-  const [servicePrice, setServicePrice] = useState(90);
   const [serviceFee, setServiceFee] = useState(100);
+  const [hourRate, setHourRate] = useState(0);
 
   useEffect(() => {
     if (workerData) {
-      setServicePrice(workerData.servicePrice || 90);
+      setHourRate(workerData.hour_rate || 0);
       setServiceFee(workerData.serviceFee || 100);
     }
   }, [workerData]);
@@ -45,25 +52,70 @@ const BookService = ({ workerData }) => {
   const watchDuration = watch("selectedDuration");
   const watchUrgent = watch("isUrgent");
 
-  // Calculate total dynamically
+  // Convert duration like "2 hours" -> 2
+  const getDurationHours = (duration) => {
+    if (!duration) return 0;
+    const match = duration.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+
+  const durationHours = getDurationHours(watchDuration);
+
+  // Calculate dynamic service price
+  const servicePrice = hourRate * durationHours;
+
+  // Calculate total
   const totalPrice = servicePrice + serviceFee + (watchUrgent ? urgentFee : 0);
 
   const timeOptions = ["9:00 AM", "10:00 AM", "1:00 PM", "3:00 PM"];
   const durationOptions = ["1 hour", "2 hours", "3 hours"];
+const onSubmit = (data) => {
+  const bookingPayload = {
+    customer_id: user?._id,
+    customer_name: `${user?.first_name} ${user?.last_name}`,
+    customer_email: user?.email,
+    customer_phone: user?.phone,
+    customer_address: user?.address,
+    customer_city: user?.city,
+    customer_postal_code: user?.postal_code,
 
-  const onSubmit = (data) => {
-    const bookingPayload = {
-      ...data,
-      workerId: workerData?.id || 1,
-      servicePrice,
-      serviceFee,
-      urgentFee: data.isUrgent ? urgentFee : 0,
-      totalPrice,
-      status: "pending", // Worker will accept/reject
-    };
-    console.log("Booking Payload:", bookingPayload);
-    // Send this payload to your backend API
+    worker_id: workerData?._id,
+    worker_name: `${workerData?.first_name} ${workerData?.last_name}`,
+    worker_skills: workerData?.skills,
+    worker_hour_rate: hourRate,
+
+    booking_date: data.selectedDate,
+    booking_time: data.selectedTime,
+    booking_duration: data.selectedDuration,
+    booking_duration_hours: durationHours,
+    booking_description: data.jobDescription,
+    booking_is_urgent: data.isUrgent,
+    booking_status: "pending",
+
+    price_service: servicePrice,
+    price_service_fee: serviceFee,
+    price_urgent_fee: data.isUrgent ? urgentFee : 0,
+    price_total: totalPrice,
   };
+
+  // Dispatch the thunk directly
+  dispatch(createBooking(bookingPayload))
+    .then((resultAction) => {
+      if (createBooking.fulfilled.match(resultAction)) {
+        showToast("success", "Booking Successful");
+        navigate("/customer-dashboard/" + user._id);
+      } else {
+        // alert(resultAction.payload || "Booking failed");
+        console.log(resultAction.payload || "Booking failed");
+        
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Something went wrong while booking");
+    });
+};
+
 
   return (
     <div className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
@@ -86,23 +138,28 @@ const BookService = ({ workerData }) => {
               </h2>
               <div className="flex items-center gap-4">
                 <img
-                  src={workerData?.image || "https://via.placeholder.com/60"}
-                  alt={workerData?.name || "Worker"}
+                  src={
+                    workerData?.profileImage || "https://via.placeholder.com/150"
+                  }
+                  alt={workerData?.first_name || "Worker"}
                   className="w-16 h-16 rounded-full object-cover"
                 />
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">
-                    {workerData?.name || "John Martinez"}
+                    {workerData?.first_name + " " + workerData?.last_name}
                   </h3>
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1 inline-block">
-                    {workerData?.role || "Electrician"}
+                    {workerData?.skills?.[0]}
                   </span>
                   <div className="flex items-center gap-2 text-sm mt-1">
                     <Star className="w-4 h-4 text-yellow-400" />
                     <span>
-                      {workerData?.rating || "4.9"} ({workerData?.reviews || 127} reviews)
+                      {workerData?.rating || "4.9"} (
+                      {workerData?.reviews || 127} reviews)
                     </span>
-                    <span className="text-gray-400">• ${workerData?.hourRate || 45}/hr</span>
+                    <span className="text-gray-400">
+                       {workerData?.hour_rate || 0}/hr
+                    </span>
                   </div>
                 </div>
               </div>
@@ -117,7 +174,9 @@ const BookService = ({ workerData }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {/* Preferred Date */}
                 <div>
-                  <label className="text-sm text-gray-600 mb-1 block">Preferred Date</label>
+                  <label className="text-sm text-gray-600 mb-1 block">
+                    Preferred Date
+                  </label>
                   <Controller
                     control={control}
                     name="selectedDate"
@@ -133,7 +192,9 @@ const BookService = ({ workerData }) => {
 
                 {/* Preferred Time */}
                 <div>
-                  <label className="text-sm text-gray-600 mb-1 block">Preferred Time</label>
+                  <label className="text-sm text-gray-600 mb-1 block">
+                    Preferred Time
+                  </label>
                   <Controller
                     control={control}
                     name="selectedTime"
@@ -151,7 +212,9 @@ const BookService = ({ workerData }) => {
 
               {/* Estimated Duration */}
               <div className="mb-4">
-                <label className="text-sm text-gray-600 mb-1 block">Estimated Duration</label>
+                <label className="text-sm text-gray-600 mb-1 block">
+                  Estimated Duration
+                </label>
                 <Controller
                   control={control}
                   name="selectedDuration"
@@ -181,7 +244,7 @@ const BookService = ({ workerData }) => {
                         onChange={(e) => field.onChange(e.target.checked)}
                       />
                       <label htmlFor="urgent" className="text-sm text-gray-700">
-                        Urgent job (+${urgentFee} fee)
+                        Urgent job (+{urgentFee} fee)
                       </label>
                     </>
                   )}
@@ -194,7 +257,9 @@ const BookService = ({ workerData }) => {
               <h2 className="font-medium mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5" /> Service Location
               </h2>
-              <label className="text-sm text-gray-600 mb-1 block">Full Address</label>
+              <label className="text-sm text-gray-600 mb-1 block">
+                Full Address
+              </label>
               <Controller
                 control={control}
                 name="address"
@@ -210,8 +275,12 @@ const BookService = ({ workerData }) => {
 
             {/* Job Description */}
             <div className="bg-white p-5 rounded-lg shadow-sm border">
-              <h2 className="font-medium mb-4 flex items-center gap-2">Job Description</h2>
-              <label className="text-sm text-gray-600 mb-1 block">Describe the work needed</label>
+              <h2 className="font-medium mb-4 flex items-center gap-2">
+                Job Description
+              </h2>
+              <label className="text-sm text-gray-600 mb-1 block">
+                Describe the work needed
+              </label>
               <Controller
                 control={control}
                 name="jobDescription"
@@ -237,22 +306,22 @@ const BookService = ({ workerData }) => {
 
               <div className="text-sm text-gray-700 space-y-2 mb-4">
                 <div className="flex justify-between">
-                  <span>Service</span>
-                  <span>${servicePrice}</span>
+                  <span>Service ({durationHours} hr × {hourRate})</span>
+                  <span>{servicePrice}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Service Fee</span>
-                  <span>${serviceFee}</span>
+                  <span>{serviceFee}</span>
                 </div>
                 {watchUrgent && (
                   <div className="flex justify-between text-red-600">
                     <span>Urgent Fee</span>
-                    <span>${urgentFee}</span>
+                    <span>{urgentFee}</span>
                   </div>
                 )}
                 <div className="border-t pt-2 font-semibold flex justify-between">
                   <span>Total</span>
-                  <span>${totalPrice}</span>
+                  <span>{totalPrice}</span>
                 </div>
               </div>
 
@@ -271,7 +340,7 @@ const BookService = ({ workerData }) => {
                 type="submit"
                 className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 rounded transition"
               >
-                Book Now - ${totalPrice}
+                Book Now - {totalPrice}
               </button>
             </div>
             <div className="bg-white p-5 rounded-lg shadow-sm border">

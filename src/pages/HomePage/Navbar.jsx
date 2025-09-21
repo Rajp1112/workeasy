@@ -5,23 +5,30 @@ import IconButton from "../../components/IconButton";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, logout } from "../../features/auth/authSlice";
 
-const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Find Workers", href: "/find-workers" },
-  { name: "Customer Dashboard", href: "/customer-dashboard" },
-  { name: "Worker Dashboard", href: "/worker-dashboard" },
-  { name: "Admin Dashboard", href: "/admin-dashboard" },
-];
-
 const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
+console.log("user in navbar:", user);
 
   useEffect(() => {
     if (!user) dispatch(fetchUser());
   }, [user, dispatch]);
+
+  // Build navigation dynamically based on role
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Find Workers", href: "/find-workers" },
+  ];
+
+  if (user?.role === "customer") {
+    navigation.push({ name: "Customer Dashboard", href: `/customer-dashboard/${user._id}` });
+  } else if (user?.role === "worker") {
+    navigation.push({ name: "Worker Dashboard", href: `/worker-dashboard/${user._id}` });
+  } else if (user?.role === "admin") {
+    navigation.push({ name: "Admin Dashboard", href: `/admin-dashboard/${user._id}` });
+  }
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-lg">
@@ -43,7 +50,7 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`relative text-gray-600 hover:opacity-80 font-medium transition-colors`}
+                  className="relative text-gray-600 hover:opacity-80 font-medium transition-colors"
                 >
                   {item.name}
                   <span

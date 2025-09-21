@@ -1,15 +1,24 @@
 const ENDPOINTS = {
   AUTH: {
-    REGISTER: '/api/auth/register',
-    LOGIN: '/api/auth/login',
+    REGISTER: "/api/auth/register",
+    LOGIN: "/api/auth/login",
   },
   USER: {
-    GET_USER: '/api/auth/user',
-    GET_WORKERS: '/api/auth/workers',
+    GET_USER: "/api/auth/user",
+    GET_WORKERS: "/api/auth/workers",
   },
-  SERVICE: '/api/data/service',
-  ADMIN_DASHBOARD: '/api/admin/users',
-  CONTACT: '/api/form/contact',
+  SERVICE: "/api/data/service",
+  ADMIN_DASHBOARD: "/api/admin/users",
+  CONTACT: "/api/form/contact",
+
+  BOOKING: {
+    CREATE: "/api/bookings/",
+    GET_ALL: "/api/bookings",
+    GET_CUSTOMER_BOOKINGS: "/api/bookings/customer", 
+    GET_WORKERS_BOOKINGS: "/api/bookings/worker",
+    UPDATE: "/api/bookings", 
+    DELETE: "/api/bookings", 
+  },
 };
 
 export default ENDPOINTS;
