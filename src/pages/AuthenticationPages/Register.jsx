@@ -52,7 +52,11 @@ const stepFields = {
       { name: "postal_code", type: "text" },
     ],
     [
-      { name: "skills", type: "select", options: ["Plumbing", "Electrician", "Carpenter"] },
+      {
+        name: "skills",
+        type: "select",
+        options: ["Plumbing", "Electrician", "Carpenter"],
+      },
       { name: "experience", type: "text" },
       { name: "hour_rate", type: "text" },
       { name: "bio", type: "text" },
@@ -70,24 +74,22 @@ const stepImages = {
 };
 
 const Register = () => {
-
-
   const [registerType, setRegisterType] = useState("customer");
   const [activeStep, setActiveStep] = useState(0);
   const { register, handleSubmit, reset } = useForm();
   const dispatch = useDispatch();
-    const { showToast } = useToast();
-const navigate = useNavigate();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   const onSubmit = (data) => {
-  if (activeStep < stepLabels[registerType].length - 1) {
-    setActiveStep(activeStep + 1);
-    return;
-  }
+    if (activeStep < stepLabels[registerType].length - 1) {
+      setActiveStep(activeStep + 1);
+      return;
+    }
 
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
       if (key === "profileImage" && data.profileImage?.[0]) {
-        formData.append("profileImage", data.profileImage[0]); 
+        formData.append("profileImage", data.profileImage[0]);
       } else {
         formData.append(key, data[key]);
       }
@@ -104,11 +106,7 @@ const navigate = useNavigate();
       .catch((err) => {
         console.error("Registration failed:", err);
       });
- 
-};
-
-
-
+  };
 
   const handleBack = () => {
     if (activeStep > 0) setActiveStep(activeStep - 1);
@@ -134,39 +132,41 @@ const navigate = useNavigate();
 
   return (
     <div className="flex flex-col min-h-screen">
-      
-<nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-lg">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 cursor-pointer">
-            <div className="bg-gray-900 text-white p-2 rounded-lg">
-              <Hammer className="h-6 w-6" />
-            </div>
-            <span className="font-bold text-lg">WorkerFinder</span>
-          </Link>
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-lg">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2 cursor-pointer">
+              <div className="bg-gray-900 text-white p-2 rounded-lg">
+                <Hammer className="h-6 w-6" />
+              </div>
+              <span className="font-bold text-lg">WorkerFinder</span>
+            </Link>
 
-          <div className="hidden md:flex items-center space-x-4 flex-col text-center">
-            <h2 className="text-2xl font-semibold">
-                {`Register as ${registerType === "customer" ? "Customer" : "Worker"}`}
+            <div className="hidden md:flex items-center space-x-4 flex-col text-center">
+              <h2 className="text-2xl font-semibold">
+                {`Register as ${
+                  registerType === "customer" ? "Customer" : "Worker"
+                }`}
               </h2>
-          <p className="text-gray-600 mt-1">
-            Please fill in the details below to complete your registration.
-          </p>
-          </div>
+              <p className="text-gray-600 mt-1">
+                Please fill in the details below to complete your registration.
+              </p>
+            </div>
 
-          <div className="flex items-center space-x-3">
-            
-<IconButton
+            <div className="flex items-center space-x-3">
+              <IconButton
                 icon={UserPlus}
-                label={`Register to ${registerType === "customer" ? "Worker" : "Customer"}`}
+                label={`Register to ${
+                  registerType === "customer" ? "Worker" : "Customer"
+                }`}
                 variant=""
                 onClick={switchRegisterType}
-            />
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
       {/* Stepper */}
       <div className="px-5 py-5 bg-gray-50">
         <Stepper activeStep={activeStep} alternativeLabel>
@@ -187,7 +187,7 @@ const navigate = useNavigate();
             backgroundImage: `url(${stepImages[registerType][activeStep]})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            minHeight: "500px", 
+            minHeight: "500px",
           }}
         />
 
@@ -200,11 +200,17 @@ const navigate = useNavigate();
             {renderStepFields()}
 
             <div className="flex justify-between mt-4">
-              <MUIButton variant="outlined" onClick={handleBack} disabled={activeStep === 0}>
+              <MUIButton
+                variant="outlined"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+              >
                 Back
               </MUIButton>
               <MUIButton variant="contained" type="submit">
-                {activeStep === stepLabels[registerType].length - 1 ? "Submit" : "Next"}
+                {activeStep === stepLabels[registerType].length - 1
+                  ? "Submit"
+                  : "Next"}
               </MUIButton>
             </div>
           </form>

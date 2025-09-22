@@ -16,10 +16,10 @@ import ProtectedRoutePage from "./layout/ProtectedRoutePage";
 import WorkerProfile from "./pages/FindWorkers/WorkerProfile/WorkerProfile";
 import BookService from "./pages/FindWorkers/BookService/BookService";
 import CustomerDashboard from "./pages/Dashboards/CustomerDashboard";
-// Protected Route Component
-//
+import WorkerDashboard from "./pages/Dashboards/WorkerDashboard";
 
 function App() {
+  const token = localStorage.getItem("token");
   return (
     <div className="min-h-screen">
       <Routes>
@@ -61,8 +61,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Add other protected routes here */}
-        Example:{" "}
+
         <Route
           path="/customer-dashboard/:customerId"
           element={
@@ -73,9 +72,25 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/worker-dashboard/:workerId"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <WorkerDashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
         <Route path="/protected-fallback" element={<ProtectedRoutePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={token ? <Navigate to="/" /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={token ? <Navigate to="/" /> : <Register />}
+        />
         {/* Fallback route for unmatched URLs */}
         <Route
           path="*"

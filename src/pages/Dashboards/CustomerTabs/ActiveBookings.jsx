@@ -1,7 +1,11 @@
 import React from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from "react-icons/fa";
+import { updateBooking } from "../../../features/booking/bookingSlice";
+import { useDispatch } from "react-redux";
 
-const ActiveBookings = ({ bookings }) => {
+const ActiveBookings = ({ bookings  }) => {
+
+  const dispatch = useDispatch();
   const getStatusStyles = (status) => {
     switch (status) {
       case "Confirmed":
@@ -10,11 +14,26 @@ const ActiveBookings = ({ bookings }) => {
         return "bg-yellow-100 text-yellow-700";
       case "Cancelled":
         return "bg-red-100 text-red-700";
+      case "in-progress":
+        return "bg-blue-100 text-blue-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
-
+const handleCancel = (id) => {
+    dispatch(
+      updateBooking({
+        id,
+        data: { booking_status: "cancelled" },
+      })
+    )
+      .then((res) => {
+        console.log("Booking updated:", res);
+      })
+      .catch((err) => {
+        console.error("Failed to update booking:", err);
+      });
+  };
   return (
     <div className="flex flex-col gap-4">
       {bookings.map((booking) => (
@@ -46,8 +65,8 @@ const ActiveBookings = ({ bookings }) => {
                 <button className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100">
                   Contact Worker
                 </button>
-                {booking.status === "Pending" && (
-                  <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                {booking?.booking_status === "pending" && (
+                  <button className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700" onClick={() => handleCancel(booking._id)}>
                     Cancel
                   </button>
                 )}

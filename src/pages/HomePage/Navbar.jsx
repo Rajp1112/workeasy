@@ -10,7 +10,7 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
-console.log("user in navbar:", user);
+  console.log("user in navbar:", user);
 
   useEffect(() => {
     if (!user) dispatch(fetchUser());
@@ -19,15 +19,23 @@ console.log("user in navbar:", user);
   // Build navigation dynamically based on role
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Find Workers", href: "/find-workers" },
   ];
 
   if (user?.role === "customer") {
-    navigation.push({ name: "Customer Dashboard", href: `/customer-dashboard/${user._id}` });
+    navigation.push(
+      { name: "Find Workers", href: "/find-workers" },
+      { name: "Customer Dashboard", href: `/customer-dashboard/${user._id}` }
+    );
   } else if (user?.role === "worker") {
-    navigation.push({ name: "Worker Dashboard", href: `/worker-dashboard/${user._id}` });
+    navigation.push({
+      name: "Worker Dashboard",
+      href: `/worker-dashboard/${user._id}`,
+    });
   } else if (user?.role === "admin") {
-    navigation.push({ name: "Admin Dashboard", href: `/admin-dashboard/${user._id}` });
+    navigation.push({
+      name: "Admin Dashboard",
+      href: `/admin-dashboard/${user._id}`,
+    });
   }
 
   return (
