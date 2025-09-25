@@ -1,15 +1,15 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../../app/api/axiosInstance";
-import ENDPOINTS from "../../app/endpoint";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axiosInstance from '../../app/api/axiosInstance';
+import ENDPOINTS from '../../app/endpoint';
 
 // Login user
 export const loginUser = createAsyncThunk(
-  "auth/login",
+  'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, credentials);
       const token = res.data.token;
-      localStorage.setItem("token", token);
+      localStorage.setItem('token', token);
 
       // Fetch user after login
       const userRes = await axiosInstance.get(ENDPOINTS.USER.GET_USER, {
@@ -18,31 +18,45 @@ export const loginUser = createAsyncThunk(
 
       return userRes.data.user;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.msg || "Login failed");
+      return rejectWithValue(err.response?.data?.msg || 'Login failed');
     }
   }
 );
 
-// Register user
 export const registerUser = createAsyncThunk(
-  "auth/register",
+  'auth/register',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post(ENDPOINTS.AUTH.REGISTER, data);
-      return res.data; // backend may return message
+      const isFD = typeof FormData !== 'undefined' && data instanceof FormData;
+
+      const res = await axiosInstance.post(
+        ENDPOINTS.AUTH.REGISTER,
+        data,
+        isFD
+          ? { headers: { 'Content-Type': 'multipart/form-data' } }
+          : undefined
+      );
+
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.msg || "Registration failed");
+      const serverMsg =
+        err?.response?.data?.message ||
+        err?.response?.data?.msg ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'Registration failed';
+      return rejectWithValue(serverMsg);
     }
   }
 );
 
 // Fetch user (on page reload or protected pages)
 export const fetchUser = createAsyncThunk(
-  "auth/fetchUser",
+  'auth/fetchUser',
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
 
       const res = await axiosInstance.get(ENDPOINTS.USER.GET_USER, {
         headers: { Authorization: `Bearer ${token}` },
@@ -50,34 +64,35 @@ export const fetchUser = createAsyncThunk(
 
       return res.data.user;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.msg || err.message || "Fetching user failed");
-    }
-  }
-);
-
-export const getWorkers = createAsyncThunk(
-  "auth/getWorkers",
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-
-      const res = await axiosInstance.get(ENDPOINTS.USER.GET_WORKERS, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      return res.data.workers; 
-    } catch (err) {
       return rejectWithValue(
-        err.response?.data?.msg || err.message || "Fetching workers failed"
+        err.response?.data?.msg || err.message || 'Fetching user failed'
       );
     }
   }
 );
 
+export const getWorkers = createAsyncThunk(
+  'auth/getWorkers',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      const res = await axiosInstance.get(ENDPOINTS.USER.GET_WORKERS, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return res.data.workers;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.msg || err.message || 'Fetching workers failed'
+      );
+    }
+  }
+);
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState: {
     user: null,
     loading: false,
@@ -86,13 +101,15 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
     builder
       // Login
-      .addCase(loginUser.pending, (state) => { state.loading = true; })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
@@ -104,7 +121,9 @@ const authSlice = createSlice({
       })
 
       // Register
-      .addCase(registerUser.pending, (state) => { state.loading = true; })
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
@@ -115,7 +134,9 @@ const authSlice = createSlice({
       })
 
       // Fetch user
-      .addCase(fetchUser.pending, (state) => { state.loading = true; })
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
