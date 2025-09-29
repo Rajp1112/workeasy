@@ -112,12 +112,10 @@ const WorkerDashboard = () => {
       jobDate.getFullYear() === currentYear
     );
   });
-  console.log(completedJobsThisMonth);
 
   const totalPriceThisMonth = completedJobsThisMonth.reduce((sum, job) => {
     return sum + job.price_total;
   }, 0);
-  console.log(totalPriceThisMonth);
 
   const newRequests = pendingJobs.filter(
     (jobs) => jobs?.booking_status === 'pending'
