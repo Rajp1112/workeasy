@@ -153,8 +153,8 @@ const BookService = () => {
                   <div className='flex items-center gap-2 text-sm mt-1'>
                     <Star className='w-4 h-4 text-yellow-400' />
                     <span>
-                      {workerData?.averageRating || '4.9'} (
-                      {workerData?.reviews.length} reviews)
+                      {workerData?.averageRating} ({workerData?.reviews.length}{' '}
+                      reviews)
                     </span>
                     <span className='text-gray-400'>
                       {workerData?.hour_rate || 0}/hr

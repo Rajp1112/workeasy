@@ -13,6 +13,18 @@ const CustomerDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState([]);
   useEffect(() => {
+    const socket = io(API_BASE_URL);
+
+    socket.on('workerAvailabilityUpdated', (data) => {
+      console.log('Worker availability changed:', data);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (user?._id) {
       dispatch(getCustomerBookings(user._id))
         .then((res) => {

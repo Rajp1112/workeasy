@@ -5,6 +5,8 @@ import WorkersGrid from './WorkersGrid';
 import Button from '../../components/Button';
 import { useDispatch } from 'react-redux';
 import { getWorkers } from '../../features/auth/authSlice';
+import API_BASE_URL from '../../app/apiConfig';
+import { io } from 'socket.io-client';
 const skills = ['Electrician', 'Plumber', 'Carpenter', 'Painter', 'Cleaner'];
 
 const FindWorkersPage = () => {
@@ -30,6 +32,22 @@ const FindWorkersPage = () => {
         setWorkers([]);
       })
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    const socket = io(API_BASE_URL);
+
+    socket.on('workerAvailabilityUpdated', ({ workerId, available }) => {
+      setWorkers((prevWorkers) =>
+        prevWorkers.map((worker) =>
+          worker._id === workerId ? { ...worker, available } : worker
+        )
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const toggleSkill = (skill) => {
