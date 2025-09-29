@@ -1,11 +1,9 @@
 import { CheckCircle, Star } from 'lucide-react';
 import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from 'react-icons/fa';
-import { getImageUrl } from '../../../helper';
 
 const BookingHistory = ({ bookingHistory }) => {
   const getStatusStyles = () => 'bg-green-100 text-green-700';
-  const profileImageUrl = getImageUrl(bookingHistory?.profileImage);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -15,11 +13,6 @@ const BookingHistory = ({ bookingHistory }) => {
           className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow border'
         >
           <div className='flex items-center gap-4'>
-            <img
-              src={profileImageUrl}
-              alt={booking.worker}
-              className='w-12 h-12 rounded-full object-cover'
-            />
             <div className='flex flex-col gap-1'>
               <span className='font-semibold'>
                 {booking?.booking_description}
