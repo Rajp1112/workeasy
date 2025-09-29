@@ -10,14 +10,14 @@ import {
 } from 'lucide-react';
 import { FaUser } from 'react-icons/fa';
 import { IoIosArrowRoundBack } from 'react-icons/io';
-import IconButton from '../../../components/IconButton';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CustomSelect from '../../../components/CustomSelect';
 import CustomDateSelect from '../../../components/CustomDateSelect';
 import CustomInput from '../../../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { createBooking } from '../../../features/booking/bookingSlice';
 import { useToast } from '../../../components/ToastProvider';
+import { getImageUrl } from '../../../helper';
 
 const BookService = () => {
   const navigate = useNavigate();
@@ -114,15 +114,21 @@ const BookService = () => {
         alert('Something went wrong while booking');
       });
   };
+  const profileImageUrl = getImageUrl(workerData?.profileImage);
 
   return (
     <div className='min-h-screen px-6 py-8 max-w-5xl mx-auto'>
       <div className='w-full max-w-5xl items-start'>
-        <IconButton
-          icon={IoIosArrowRoundBack}
-          label='Back to Search'
-          onClick={() => navigate('/find-workers')}
-        />
+        <Link
+          to='/find-workers'
+          className='group inline-flex items-center gap-1 text-gray-900 font-medium relative'
+        >
+          <IoIosArrowRoundBack className='text-xl' />
+          <span className='relative'>
+            Back to Search
+            <span className='absolute left-0 -bottom-0.5 w-0 h-0.5 bg-gray-900 transition-all duration-300 group-hover:w-full'></span>
+          </span>
+        </Link>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -136,10 +142,7 @@ const BookService = () => {
               </h2>
               <div className='flex items-center gap-4'>
                 <img
-                  src={
-                    workerData?.profileImage ||
-                    'https://via.placeholder.com/150'
-                  }
+                  src={profileImageUrl}
                   alt={workerData?.first_name || 'Worker'}
                   className='w-16 h-16 rounded-full object-cover'
                 />

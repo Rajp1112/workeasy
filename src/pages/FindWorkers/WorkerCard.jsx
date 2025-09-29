@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../../components/Button';
 import { Clock, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../../helper';
 
 const WorkerCard = ({ worker }) => {
   const navigate = useNavigate();
@@ -15,12 +16,13 @@ const WorkerCard = ({ worker }) => {
   const handleViewProfile = () => {
     navigate(`/worker-profile/${worker._id}`, { state: { worker } });
   };
+  const profileImageUrl = getImageUrl(worker?.profileImage);
 
   return (
     <div className='bg-white p-6 rounded-xl shadow hover:shadow-lg transition w-full '>
       <div className='flex gap-4'>
         <img
-          src={worker?.profileImage}
+          src={profileImageUrl}
           alt='Not'
           className='w-16 h-16 rounded-full object-cover'
         />
