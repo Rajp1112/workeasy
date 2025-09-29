@@ -1,65 +1,67 @@
-import { CheckCircle, Star } from "lucide-react";
-import React from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from "react-icons/fa";
-
-
+import { CheckCircle, Star } from 'lucide-react';
+import React from 'react';
+import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from 'react-icons/fa';
+import { getImageUrl } from '../../../helper';
 
 const BookingHistory = ({ bookingHistory }) => {
-  const getStatusStyles = () => "bg-green-100 text-green-700";
-  console.log(bookingHistory);
+  const getStatusStyles = () => 'bg-green-100 text-green-700';
+  const profileImageUrl = getImageUrl(bookingHistory?.profileImage);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className='flex flex-col gap-4'>
       {bookingHistory?.map((booking) => (
         <div
           key={booking._id}
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow border"
+          className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow border'
         >
-          <div className="flex items-center gap-4">
+          <div className='flex items-center gap-4'>
             <img
-              src={booking.image || 'https://via.placeholder.com/150'}
+              src={profileImageUrl}
               alt={booking.worker}
-              className="w-12 h-12 rounded-full object-cover"
+              className='w-12 h-12 rounded-full object-cover'
             />
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold">{booking?.booking_description}</span>
-              <span className="text-gray-500 text-sm">
+            <div className='flex flex-col gap-1'>
+              <span className='font-semibold'>
+                {booking?.booking_description}
+              </span>
+              <span className='text-gray-500 text-sm'>
                 with {booking?.worker_name}
               </span>
-              <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
-                <FaCalendarAlt className="w-4 h-4" />
+              <div className='flex items-center gap-2 text-gray-500 text-sm mt-1'>
+                <FaCalendarAlt className='w-4 h-4' />
                 <span>
-                  {new Date(booking?.booking_date).toLocaleDateString()} at {booking?.booking_time}
+                  {new Date(booking?.booking_date).toLocaleDateString()} at{' '}
+                  {booking?.booking_time}
                 </span>
               </div>
-              <div className="flex gap-2 mt-2 sm:mt-0">
-                <button className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100">
+              <div className='flex gap-2 mt-2 sm:mt-0'>
+                <button className='px-3 py-1 border rounded text-gray-700 hover:bg-gray-100'>
                   View Details
                 </button>
-                <button className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100">
+                <button className='px-3 py-1 border rounded text-gray-700 hover:bg-gray-100'>
                   Contact Worker
                 </button>
               </div>
             </div>
           </div>
 
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <FaMapMarkerAlt className="w-4 h-4" />
-              <span>{booking?.customer_address}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <FaRegCreditCard className="w-4 h-4" />
-              <span>{booking?.price_total}</span>
-            </div>
-          <div className="flex flex-col  gap-1 mt-2 sm:mt-0">
+          <div className='flex items-center gap-2 text-gray-500 text-sm'>
+            <FaMapMarkerAlt className='w-4 h-4' />
+            <span>{booking?.customer_address}</span>
+          </div>
+          <div className='flex items-center gap-2 text-gray-500 text-sm'>
+            <FaRegCreditCard className='w-4 h-4' />
+            <span>{booking?.price_total}</span>
+          </div>
+          <div className='flex flex-col  gap-1 mt-2 sm:mt-0'>
             <div
               className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusStyles()}`}
             >
-              <CheckCircle className="w-4 h-4 inline-block mr-1" />
+              <CheckCircle className='w-4 h-4 inline-block mr-1' />
               {booking?.booking_status}
             </div>
-            <span className="text-gray-500 text-sm">
-               <Star className="w-4 h-4  mr-1 text-yellow-500" />
+            <span className='text-gray-500 text-sm'>
+              <Star className='w-4 h-4  mr-1 text-yellow-500' />
             </span>
           </div>
         </div>
