@@ -2,7 +2,7 @@ import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from 'react-icons/fa';
 import { updateBooking } from '../../../features/booking/bookingSlice';
 import { useDispatch } from 'react-redux';
-import getImageUrl from '../../../helper';
+
 const ActiveBookings = ({ bookings }) => {
   const dispatch = useDispatch();
   const getStatusStyles = (status) => {
@@ -33,7 +33,7 @@ const ActiveBookings = ({ bookings }) => {
         console.error('Failed to update booking:', err);
       });
   };
-  const profileImageUrl = getImageUrl(bookings?.profileImage);
+  console.log(bookings);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -43,11 +43,6 @@ const ActiveBookings = ({ bookings }) => {
           className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow border'
         >
           <div className='flex items-center gap-4'>
-            <img
-              src={profileImageUrl}
-              alt={booking?.worker_name}
-              className='w-12 h-12 rounded-full object-cover'
-            />
             <div className='flex flex-col gap-1'>
               <span className='font-semibold'>{booking?.worker_skills[0]}</span>
               <span className='text-gray-500 text-sm'>
