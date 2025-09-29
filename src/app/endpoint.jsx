@@ -2,6 +2,7 @@ const ENDPOINTS = {
   AUTH: {
     REGISTER: '/api/auth/register',
     LOGIN: '/api/auth/login',
+    UPDATE_AVAILABILITY: 'api/auth/workers/availability',
   },
   USER: {
     GET_USER: '/api/auth/user',

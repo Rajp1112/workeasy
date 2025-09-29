@@ -90,7 +90,27 @@ export const getWorkers = createAsyncThunk(
     }
   }
 );
+export const updateAvailability = createAsyncThunk(
+  '/workers/availability',
+  async ({ workerId, available }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
 
+      const res = await axiosInstance.put(
+        `${ENDPOINTS.AUTH.UPDATE_AVAILABILITY}`,
+        { workerId, available },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.msg || err.message);
+    }
+  }
+);
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
