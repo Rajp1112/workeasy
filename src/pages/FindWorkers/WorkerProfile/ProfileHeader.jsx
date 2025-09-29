@@ -7,16 +7,17 @@ import {
   ShieldCheck,
   Award,
 } from 'lucide-react';
+import { getImageUrl } from '../../../helper';
 
 const ProfileHeader = ({ worker, skills }) => {
-  console.log(worker);
+  const profileImageUrl = getImageUrl(worker?.profileImage);
 
   return (
     <div className='flex flex-col gap-6'>
       {/* Top section with image + basic info */}
       <div className='flex items-center gap-6'>
         <img
-          src={worker?.profileImage}
+          src={profileImageUrl}
           alt={worker?.first_name}
           className='w-28 h-28 rounded-full object-cover border-2 border-gray-200'
         />
