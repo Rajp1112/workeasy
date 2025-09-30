@@ -1,10 +1,20 @@
 import { CheckCircle, Star } from 'lucide-react';
 import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaRegCreditCard } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const BookingHistory = ({ bookingHistory }) => {
-  const getStatusStyles = () => 'bg-green-100 text-green-700';
+  console.log(bookingHistory);
 
+  const getStatusStyles = () => 'bg-green-100 text-green-700';
+  const navigate = useNavigate();
+  const handleTrackBooking = (booking) => {
+    console.log(booking);
+
+    navigate(`/track-booking/${booking._id}`, {
+      state: { booking },
+    });
+  };
   return (
     <div className='flex flex-col gap-4'>
       {bookingHistory?.map((booking) => (
@@ -28,7 +38,10 @@ const BookingHistory = ({ bookingHistory }) => {
                 </span>
               </div>
               <div className='flex gap-2 mt-2 sm:mt-0'>
-                <button className='px-3 py-1 border rounded text-gray-700 hover:bg-gray-100'>
+                <button
+                  className='px-3 py-1 border rounded text-gray-700 hover:bg-gray-100'
+                  onClick={() => handleTrackBooking(booking)}
+                >
                   View Details
                 </button>
                 <button className='px-3 py-1 border rounded text-gray-700 hover:bg-gray-100'>

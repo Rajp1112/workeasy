@@ -13,7 +13,7 @@ export const createReview = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return res.data.review;
+      return res.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.msg || error.message || 'Review creation failed'
