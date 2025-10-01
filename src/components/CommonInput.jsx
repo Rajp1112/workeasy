@@ -93,6 +93,7 @@ const CommonInput = ({
       label={placeholder}
       fullWidth
       margin='normal'
+      multiline={multiline}
     />
   );
 };

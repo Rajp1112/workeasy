@@ -15,6 +15,13 @@ const BookingHistory = ({ bookingHistory }) => {
       state: { booking },
     });
   };
+  if (!bookingHistory || bookingHistory.length === 0) {
+    return (
+      <div className='text-center text-gray-500 py-10'>
+        Bookings history not found.
+      </div>
+    );
+  }
   return (
     <div className='flex flex-col gap-4'>
       {bookingHistory?.map((booking) => (

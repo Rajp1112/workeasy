@@ -28,6 +28,7 @@ const stepFields = {
       { name: 'address', type: 'text' },
       { name: 'city', type: 'text' },
       { name: 'postal_code', type: 'text' },
+      { name: 'profileImage', type: 'file' },
     ],
   ],
   worker: [

@@ -22,7 +22,6 @@ const ReviewForm = ({ booking }) => {
     };
 
     if (rating === 0) {
-      // Optional: show a toast asking for rating
       showToast('info', 'Please select a star rating before submitting.');
       return;
     }
@@ -39,6 +38,7 @@ const ReviewForm = ({ booking }) => {
       .then((res) => {
         if (res?.payload?.review) {
           showToast('success', res.payload.message);
+          navigate(`/customer-dashboard/${booking._id}`);
         }
       })
       .catch((err) => {
@@ -77,10 +77,10 @@ const ReviewForm = ({ booking }) => {
       {/* Review Text */}
       <CommonInput
         type='text'
-        placeholder='Share details about your experience...'
+        placeholder='Share details about your experience'
         name='review'
         register={register}
-        multiline
+        multiline={true}
       />
 
       {/* Recommend Checkbox */}
@@ -94,20 +94,19 @@ const ReviewForm = ({ booking }) => {
       </div>
 
       {/* Photo Upload */}
+
       <div className='pb-4'>
-        <CommonInput
-          type='file'
-          placeholder='Add Photos'
-          name='photos'
-          register={register}
-        />
+        <label className='text-gray-900'>
+          Add Photos
+          <CommonInput
+            type='file'
+            placeholder='Add Photos'
+            name='photos'
+            register={register}
+          />
+        </label>
       </div>
-      <Button
-        type='submit'
-        label={'Submit Review'}
-        className='flex-1 w-full'
-        // disabled={}
-      />
+      <Button type='submit' label={'Submit Review'} className='flex-1 w-full' />
     </form>
   );
 };
