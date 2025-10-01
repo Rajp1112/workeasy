@@ -28,13 +28,16 @@ const CustomerDashboard = () => {
     if (user?._id) {
       dispatch(getCustomerBookings(user._id))
         .then((res) => {
-          setBookings(res?.payload);
+          const payload = Array.isArray(res?.payload) ? res.payload : [];
+          setBookings(payload);
         })
         .catch((err) => {
           console.error('Failed to fetch booking:', err);
+          setBookings([]);
         });
     }
   }, [user]);
+
   useEffect(() => {
     if (!user?._id) return;
 

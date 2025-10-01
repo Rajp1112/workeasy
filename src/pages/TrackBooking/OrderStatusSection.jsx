@@ -98,14 +98,14 @@ const OrderStatusSection = ({ booking }) => {
             return (
               <div key={s.key} className='flex items-start gap-3'>
                 {isActive ? (
-                  <CheckCircle className='text-green-500 w-6 h-6' />
+                  <CheckCircle className='text-green-500 w-6 h-6 bg-green-100 rounded-full' />
                 ) : (
                   <Clock className='text-gray-400 w-6 h-6' />
                 )}
                 <div>
                   <p
                     className={`font-medium ${
-                      isCurrent ? 'text-blue-600' : 'text-gray-900'
+                      isCurrent ? 'text-green-500' : 'text-gray-900'
                     }`}
                   >
                     {s.label}

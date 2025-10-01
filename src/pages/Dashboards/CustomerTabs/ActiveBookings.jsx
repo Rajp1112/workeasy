@@ -40,6 +40,14 @@ const ActiveBookings = ({ bookings }) => {
     navigate(`/track-booking/${booking._id}`, { state: { booking } });
   };
 
+  if (!bookings || bookings.length === 0) {
+    return (
+      <div className='text-center text-gray-500 py-10'>
+        Active bookings not found.
+      </div>
+    );
+  }
+
   return (
     <div className='flex flex-col gap-4'>
       {bookings.map((booking) => (
